@@ -1,4 +1,4 @@
-import shortid from 'shortid';
+const shortid = require('shortid');
 import { createWriteStream } from 'fs';
 import { getUserId, Context } from '../../utils';
 
@@ -24,8 +24,8 @@ const processUpload = async upload => {
 
 export const product = {
   async createProduct(parent, { name, price, picture }, ctx: Context, info) {
-    // const userId = getUserId(ctx);
-    const userId = 1;
+    const userId = getUserId(ctx);
+
     const pictureUrl = await processUpload(picture);
     return ctx.db.mutation.createProduct(
       {
