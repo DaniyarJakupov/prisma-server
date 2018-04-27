@@ -26,5 +26,8 @@ export const Query = {
     return ctx.db.query.user({ where: { id } }, info);
   },
 
-  products: forwardTo('db')
+  products: (parent, args, ctx: Context, info) => {
+    getUserId(ctx);
+    return forwardTo('db')(parent, args, ctx, info);
+  }
 };
