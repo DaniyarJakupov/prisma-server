@@ -24,6 +24,7 @@ type Mutation {
   login(email: String!, password: String!): LoginResponse!
   createDraft(title: String!, text: String!): Post!
   createProduct(name: String!, price: Float!, picture: Upload!): Product!
+  updateProduct(id: ID!, name: String, price: Float, picture: Upload): Product
   publish(id: ID!): Post!
   deletePost(id: ID!): Post!
 }
