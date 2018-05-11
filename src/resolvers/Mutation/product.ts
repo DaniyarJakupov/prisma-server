@@ -40,5 +40,38 @@ export const product = {
       },
       info
     );
+  },
+
+  async updateProduct(
+    parent,
+    { id, name, price, picture },
+    ctx: Context,
+    info
+  ) {
+    // Check if the user has rights to edit product
+    const userId = getUserId(ctx);
+    const product = await ctx.db.query.product({ where: { id } });
+    if (userId !== product.seller.id) {
+      throw new Error('Permission denied');
+    }
+
+    // Upload picture to the server
+    let pictureUrl = null;
+    if (picture) {
+      pictureUrl = await processUpload(picture);
+    }
+
+    // Update product in db
+    return ctx.db.mutation.updateProduct(
+      {
+        data: {
+          name,
+          price,
+          pictureUrl
+        },
+        where: { id }
+      },
+      info
+    );
   }
 };
