@@ -1,28 +1,11 @@
 import * as shortid from 'shortid';
 import { createWriteStream } from 'fs';
+import { forwardTo } from 'prisma-binding';
 import { getUserId, Context } from '../../utils';
 
-const uploadDir = './uploads';
-
-const storeUpload = async ({ stream, filename }): Promise<any> => {
-  const id = shortid.generate();
-  const path = `images/${id}`;
-
-  return new Promise((resolve, reject) =>
-    stream
-      .pipe(createWriteStream(path))
-      .on('finish', () => resolve({ path }))
-      .on('error', reject)
-  );
-};
-
-const processUpload = async upload => {
-  const { stream, filename, mimetype, encoding } = await upload;
-  const { path } = await storeUpload({ stream, filename });
-  return path;
-};
-
+/* ============================= Product Mutation Resolvers ============================= */
 export const product = {
+  /* =========== createProduct =========== */
   async createProduct(parent, { name, price, picture }, ctx: Context, info) {
     const userId = getUserId(ctx);
 
@@ -41,7 +24,8 @@ export const product = {
       info
     );
   },
-
+  /* ===================================== */
+  /* =========== updateProduct =========== */
   async updateProduct(
     parent,
     { id, name, price, picture },
@@ -73,5 +57,37 @@ export const product = {
       },
       info
     );
-  }
+  },
+  /* ===================================== */
+  /* =========== deleteProduct =========== */
+  // async deleteProduct(parent, { id }, ctx: Context, info) {
+  //   // Check if the user has rights to edit product
+  //   const userId = getUserId(ctx);
+  //   const product = await ctx.db.query.product({ where: { id } });
+  //   if (userId !== product.seller.id) {
+  //     throw new Error('Permission denied');
+  //   }
+
+  //   return forwardTo('db');
+  // }
+  deleteProduct: forwardTo('db')
+};
+
+/* ============================= Helper Functions ============================= */
+const storeUpload = async ({ stream, filename }): Promise<any> => {
+  const id = shortid.generate();
+  const path = `images/${id}`;
+
+  return new Promise((resolve, reject) =>
+    stream
+      .pipe(createWriteStream(path))
+      .on('finish', () => resolve({ path }))
+      .on('error', reject)
+  );
+};
+
+const processUpload = async upload => {
+  const { stream, filename, mimetype, encoding } = await upload;
+  const { path } = await storeUpload({ stream, filename });
+  return path;
 };

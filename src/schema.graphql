@@ -1,4 +1,5 @@
 # import Post, Product, ProductWhereInput, ProductOrderByInput from "./generated/prisma.graphql"
+# import ProductWhereUniqueInput from "./generated/prisma.graphql"
 
 scalar Upload
 
@@ -25,6 +26,7 @@ type Mutation {
   createDraft(title: String!, text: String!): Post!
   createProduct(name: String!, price: Float!, picture: Upload!): Product!
   updateProduct(id: ID!, name: String, price: Float, picture: Upload): Product
+  deleteProduct(where: ProductWhereUniqueInput!): Product
   publish(id: ID!): Post!
   deletePost(id: ID!): Post!
 }
